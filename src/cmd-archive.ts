@@ -15,10 +15,11 @@ export async function archiveCommand(name: string): Promise<void> {
     const hasIgnore = await fs.exists(path.join(projectPath, ".gitignore"));
     if (hasIgnore && await userCheck(chalk.yellow("Should I clean the project? "))) {
         const isIgnored = await isGitIgnored({ cwd: projectPath });
-        const files = await glob(path.join(projectPath, "**/*"), { absolute: true });
+        const files = await glob(`/projects/${name}/**/*`);
+        console.log(files);
         for (const file of files) {
-            if (isIgnored(file)) {
-                await fs.rm(file);
+            if (isIgnored(file) && await userCheck(chalk.yellow(`${file}: `))) {
+                await fs.remove(file);
             }
         }
     }

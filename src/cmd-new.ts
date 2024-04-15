@@ -1,13 +1,13 @@
 import "zx/globals";
 import { Manifest, Project, readManifest, writeManifest } from "./manifest";
-import { ARCHIVE_PATH } from "./archive";
+import { archivePath } from "./archive";
 
 export async function newCommand(name: string, tags: string[]): Promise<void> {
     const manifest = await readManifest();
     if (manifest.projects.some((project) => project.name === name)) throw new Error(`Project ${name} already exists.`);
     if (!tags.every((tag) => manifest.allTags.includes(tag))) throw new Error("Creating a project with unknown tags. Create the tags first.");
 
-    const archived = await fs.exists(path.join(ARCHIVE_PATH, `${name}.zip`));
+    const archived = await fs.exists(archivePath(name));
     const now = new Date();
     const project: Project = {
         name,
