@@ -1,6 +1,6 @@
 import "zx/globals";
 import { Manifest, readManifest, writeManifest } from "./manifest";
-import { userCheck } from "./utils";
+import { userCheck, userConfirm } from "./utils";
 import { archivePath } from "./archive";
 import { isGitIgnored } from "globby";
 import { archiveFolder } from "zip-lib";
@@ -16,9 +16,11 @@ export async function archiveCommand(name: string): Promise<void> {
     if (hasIgnore && await userCheck(chalk.yellow("Should I clean the project? "))) {
         const isIgnored = await isGitIgnored({ cwd: projectPath });
         const files = await glob(`/projects/${name}/**/*`);
-        console.log(files);
+
+        await userConfirm(chalk.yellow(`Deleting ${files.length} files, ok? `));
+
         for (const file of files) {
-            if (isIgnored(file) && await userCheck(chalk.yellow(`${file}: `))) {
+            if (isIgnored(file)) {
                 await fs.remove(file);
             }
         }
